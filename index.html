@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1e0f33">
+<title>منو أحلى وحدة بالعالم؟</title>
+<!-- الخط يتحمّل بالخلفية حتى الصفحة تظهر فوراً -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all'"
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap"></noscript>
+<style>
+  :root{
+    --ink:#fff7fb;
+    --muted:#e2cdf0;
+    --gold:#ffd98e;
+    --glass:rgba(255,255,255,.09);
+    --stroke:rgba(255,255,255,.18);
+    --shadow:0 24px 60px rgba(0,0,0,.42);
+    --font:'Tajawal','Segoe UI',Tahoma,system-ui,sans-serif;
+    --blur:16px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:var(--font);
+    color:var(--ink);
+    background:#1e0f33;
+    overflow-x:hidden;
+    min-height:100svh;
+    display:flex;justify-content:center;
+    align-items:center;
+    align-items:safe center;      /* حتى لو المحتوى أطول من الشاشة ما ينقص من فوق */
+    padding:24px max(16px, env(safe-area-inset-right)) 24px max(16px, env(safe-area-inset-left));
+  }
+  /* طبقة الخلفية ثابتة ومنفصلة = ما تُعاد رسمتها مع أي حركة */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(900px 620px at 12% -8%, #6b3aa0 0%, transparent 58%),
+      radial-gradient(760px 620px at 96% 8%, #b64a8f 0%, transparent 55%),
+      radial-gradient(760px 700px at 78% 100%, #8a3f9e 0%, transparent 58%),
+      linear-gradient(160deg,#1e0f33 0%,#331545 48%,#160a26 100%);
+  }
+
+  /* ---------- نجوم الخلفية ---------- */
+  .decor{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;contain:strict}
+  .decor span{
+    position:absolute;bottom:-50px;
+    font-size:18px;opacity:0;
+    will-change:transform,opacity;
+    animation:rise linear infinite;
+  }
+  @keyframes rise{
+    0%{transform:translate3d(0,0,0) rotate(0deg);opacity:0}
+    12%{opacity:.75}
+    88%{opacity:.4}
+    100%{transform:translate3d(0,-112vh,0) rotate(300deg);opacity:0}
+  }
+
+  #fx{position:fixed;inset:0;pointer-events:none;z-index:80;contain:strict}
+
+  /* ---------- الشاشات ---------- */
+  .wrap{position:relative;z-index:10;width:100%;max-width:640px}
+  .screen{display:none;animation:fadeUp .38s cubic-bezier(.2,.8,.2,1)}
+  .screen.active{display:block}
+  @keyframes fadeUp{from{opacity:0;transform:translate3d(0,18px,0)}to{opacity:1;transform:none}}
+
+  .card{
+    background:var(--glass);
+    border:1px solid var(--stroke);
+    border-radius:26px;
+    padding:34px 24px 30px;
+    text-align:center;
+    -webkit-backdrop-filter:blur(var(--blur)) saturate(140%);
+    backdrop-filter:blur(var(--blur)) saturate(140%);
+    box-shadow:var(--shadow), inset 0 1px 0 rgba(255,255,255,.22);
+    position:relative;overflow:hidden;
+  }
+  .card::before{
+    content:"";position:absolute;inset:-2px;
+    background:linear-gradient(120deg,transparent 32%,rgba(255,255,255,.12) 48%,transparent 64%);
+    transform:translate3d(-120%,0,0);
+    will-change:transform;
+    animation:sheen 7s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes sheen{0%,72%{transform:translate3d(-120%,0,0)}100%{transform:translate3d(120%,0,0)}}
+
+  h1{font-size:clamp(27px,7vw,42px);margin:8px 0 10px;line-height:1.4;font-weight:900}
+  h2{font-size:clamp(20px,5.2vw,30px);margin:0 0 6px;line-height:1.6;font-weight:700}
+  p.sub{color:var(--muted);font-size:clamp(14px,3.6vw,17px);line-height:1.85;margin:6px 0 0}
+
+  .grad{
+    background:linear-gradient(95deg,#ffe0a3,#ffb3e0 45%,#c79bff);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+
+  .emblem{
+    font-size:clamp(46px,13vw,62px);display:inline-block;
+    will-change:transform;
+    animation:beat 2s ease-in-out infinite;
+  }
+  @keyframes beat{0%,100%{transform:scale(1) rotate(0)}25%{transform:scale(1.1) rotate(-5deg)}50%{transform:scale(1) rotate(0)}75%{transform:scale(1.1) rotate(5deg)}}
+
+  /* ---------- الأزرار ---------- */
+  .btn{
+    font:700 clamp(15px,4.2vw,19px)/1.2 var(--font);
+    border:0;cursor:pointer;
+    padding:15px 28px;
+    border-radius:999px;
+    color:#33143f;
+    background:linear-gradient(135deg,#ffe6b8,#ffb3d9 55%,#c99bff);
+    box-shadow:0 10px 26px rgba(180,80,190,.38), inset 0 1px 0 rgba(255,255,255,.6);
+    transition:transform .16s cubic-bezier(.2,1.4,.4,1), filter .16s;
+    touch-action:manipulation;white-space:nowrap;
+    min-height:48px;
+  }
+  @media (hover:hover){ .btn:hover{filter:brightness(1.07)} }
+  .btn:active{transform:scale(.96)}
+  .btn.ghost{
+    background:rgba(255,255,255,.10);
+    color:var(--ink);
+    border:1px solid var(--stroke);
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+  }
+
+  .options{
+    display:flex;gap:14px;justify-content:center;align-items:center;
+    flex-wrap:wrap;margin-top:26px;min-height:60px;
+  }
+  /* الحركة بالـ transform بس = تشتغل على كارت الشاشة، بدون إعادة تخطيط */
+  .runaway{transition:transform .26s cubic-bezier(.2,1.1,.3,1)}
+
+  /* ---------- التقدّم ---------- */
+  .dots{display:flex;gap:10px;justify-content:center;margin-bottom:20px}
+  .dots i{font-style:normal;font-size:21px;opacity:.26;filter:grayscale(1);transition:.3s cubic-bezier(.2,1.6,.4,1)}
+  .dots i.on{opacity:1;filter:none;transform:scale(1.26)}
+
+  .toast{
+    position:fixed;left:50%;top:max(18px, env(safe-area-inset-top));
+    transform:translate3d(-50%,-24px,0);
+    background:rgba(45,18,62,.86);
+    border:1px solid var(--stroke);
+    padding:11px 20px;border-radius:999px;
+    font-weight:700;font-size:14.5px;
+    opacity:0;transition:opacity .25s, transform .25s;
+    z-index:90;pointer-events:none;box-shadow:var(--shadow);max-width:88vw;
+  }
+  .toast.show{opacity:1;transform:translate3d(-50%,0,0)}
+
+  /* ---------- الشهادة ---------- */
+  .score{font-size:clamp(54px,17vw,100px);font-weight:900;line-height:1;margin:6px 0 2px;letter-spacing:-2px}
+  .cert{
+    margin-top:20px;border:1px dashed rgba(255,217,142,.45);
+    border-radius:18px;padding:16px 14px;background:rgba(255,217,142,.06);
+  }
+  .cert .ttl{color:var(--gold);font-weight:700;font-size:13.5px;letter-spacing:1px;margin-bottom:8px}
+  .cert .who{font-size:clamp(22px,6vw,32px);font-weight:900;margin:4px 0 6px}
+  .cert .desc{color:var(--muted);font-size:14.5px;line-height:1.75}
+  .seal{
+    display:inline-block;margin-top:12px;
+    font-size:12.5px;font-weight:700;color:#33143f;
+    background:linear-gradient(135deg,#ffe6b8,#ffc98e);
+    padding:7px 15px;border-radius:999px;
+    box-shadow:0 6px 16px rgba(255,190,110,.32);
+    transform:rotate(-3deg);
+  }
+
+  /* ---------- شبكة الصفات ---------- */
+  .traits-head{
+    margin:24px 0 12px;display:flex;align-items:center;gap:10px;justify-content:center;
+    color:var(--gold);font-weight:700;font-size:14px;letter-spacing:.5px;
+  }
+  .traits-head::before,.traits-head::after{
+    content:"";height:1px;flex:1;max-width:70px;
+    background:linear-gradient(90deg,transparent,rgba(255,217,142,.5),transparent);
+  }
+  .traits{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(158px,1fr));
+    gap:9px;text-align:right;
+  }
+  .trait{
+    background:rgba(255,255,255,.07);
+    border:1px solid var(--stroke);
+    border-radius:14px;padding:10px 12px;
+    font-size:13.5px;line-height:1.5;
+    display:flex;align-items:flex-start;gap:8px;
+    opacity:0;transform:translate3d(0,10px,0) scale(.95);
+    transition:opacity .28s ease, transform .28s cubic-bezier(.2,1.35,.4,1);
+  }
+  .trait.show{opacity:1;transform:none}
+  .trait b{font-size:15px;line-height:1.4;font-weight:400}
+  @media (max-width:600px){
+    .traits{grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:8px}
+    .trait{padding:9px 10px;font-size:12.8px}
+  }
+
+  .music{
+    position:fixed;top:max(14px, env(safe-area-inset-top));inset-inline-start:14px;z-index:95;
+    width:44px;height:44px;border-radius:50%;
+    border:1px solid var(--stroke);background:rgba(255,255,255,.10);
+    color:var(--ink);font-size:18px;cursor:pointer;
+    display:grid;place-items:center;transition:transform .16s;opacity:.6
+  }
+  @media (hover:hover){ .music:hover{transform:scale(1.1)} }
+
+  .mini{color:var(--muted);font-size:12.5px;margin-top:18px;opacity:.72;line-height:1.75}
+  .ring{
+    position:absolute;left:50%;top:50%;width:10px;height:10px;border-radius:50%;
+    border:2px solid rgba(210,150,255,.45);
+    will-change:transform,opacity;
+    animation:ring 2.8s ease-out infinite;pointer-events:none
+  }
+  /* نكبّرها بالـ scale مو بالـ width/height = بدون إعادة تخطيط */
+  @keyframes ring{
+    0%{transform:translate(-50%,-50%) scale(1);opacity:.9}
+    100%{transform:translate(-50%,-50%) scale(52);opacity:0}
+  }
+
+  /* ---------- شاشات صغيرة ---------- */
+  @media (max-width:600px){
+    :root{--blur:10px}
+    body{padding:14px}
+    .card{padding:28px 16px 24px;border-radius:22px}
+    .options{gap:11px;margin-top:22px}
+    .btn{padding:14px 20px}
+  }
+  @media (max-width:360px){
+    .btn{padding:13px 16px;font-size:14.5px}
+    .options{gap:9px}
+  }
+  /* شاشات ضعيفة/وضع توفير الحركة */
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.12s!important}
+    .decor,.ring,.card::before{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="decor" id="decor"></div>
+<canvas id="fx"></canvas>
+<button type="button" class="music" id="musicBtn" title="موسيقى" aria-label="تشغيل/إيقاف الموسيقى">&#9834;</button>
+
+<!-- أغنية الخلفية:
+     حطّ ملف الأغنية بنفس مجلد الموقع بأي اسم من الأسماء هذي، وراح يشتغل لوحده.
+     وإذا ما لكى ولا ملف، يرجع تلقائياً للّحن البديل حتى ما تصير الصفحة ساكتة. -->
+<audio id="bgm" loop preload="auto">
+  <source src="1265895758.mp3"    type="audio/mpeg">
+  <source src="tamally.mp3"       type="audio/mpeg">
+  <source src="tamally-maak.mp3"  type="audio/mpeg">
+  <source src="song.mp3"          type="audio/mpeg">
+  <source src="تملي معاك.mp3"      type="audio/mpeg">
+  <source src="tamally.m4a"       type="audio/mp4">
+  <source src="song.m4a"          type="audio/mp4">
+</audio>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="wrap">
+
+  <!-- ====== البداية ====== -->
+  <section class="screen active" id="scIntro">
+    <div class="card">
+      <div class="ring"></div>
+      <span class="emblem">👑</span>
+      <h1>هلا بـ<span class="grad nm">مروة</span></h1>
+      <p class="sub">
+        اختبار صغير... ٤ أسئلة بس ✨<br>
+        بس أحذّرچ: الأجوبة معروفة من قبل ما تبدين 😌
+      </p>
+      <div class="options">
+        <button type="button" class="btn" id="startBtn">يالله نبدي ✨</button>
+      </div>
+      <p class="mini">تنبيه: مصمَّم بحيث ما تكدرين تخسرين 🙂</p>
+    </div>
+  </section>
+
+  <!-- ====== الأسئلة ====== -->
+  <section class="screen" id="scQuiz">
+    <div class="dots" id="dots"><i>⭐</i><i>⭐</i><i>⭐</i><i>⭐</i></div>
+    <div class="card">
+      <p class="sub" id="qNum" style="margin-bottom:8px">السؤال ١ من ٤</p>
+      <h2 id="qText">—</h2>
+      <div class="options">
+        <button type="button" class="btn" id="yesBtn">نعم</button>
+        <button type="button" class="btn ghost runaway" id="noBtn">لا</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== النتيجة ====== -->
+  <section class="screen" id="scEnd">
+    <div class="card">
+      <div class="ring"></div>
+      <span class="emblem">🏆</span>
+      <p class="sub">النتيجة النهائية</p>
+      <div class="score grad">١٠٠٪</div>
+      <p class="sub">جاوبتي كل الأسئلة صح... طبعاً 😌</p>
+
+      <div class="cert">
+        <div class="ttl">✦ شهادة رسمية ✦</div>
+        <div class="who grad nm">مروة</div>
+        <div class="desc">أحلى وحدة بالعالم — بلا منافس ولا حتى مركز ثاني.</div>
+        <span class="seal">مختومة ومصدّقة 🔖</span>
+      </div>
+
+      <div class="traits-head">٢٥ صفة... وهذا بس اللي انكتب</div>
+      <div class="traits" id="traits"></div>
+
+      <div class="options">
+        <button type="button" class="btn" id="againBtn">أعيدي الاختبار 🔁</button>
+      </div>
+      <p class="mini">شكداً ما تحاولين... النتيجة نفسها 😄</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ============ إعدادات حسب قوة الجهاز ============ */
+var VW = innerWidth, VH = innerHeight;
+var SMALL   = VW < 640;
+var WEAK    = (navigator.hardwareConcurrency || 4) <= 4 || (navigator.deviceMemory || 4) <= 4;
+var REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+var LIGHT   = SMALL || WEAK || REDUCED;          /* وضع خفيف = تأثيرات أقل */
+var MAX_PARTS = REDUCED ? 0 : (LIGHT ? 90 : 200);
+
+var NAME = (new URLSearchParams(location.search).get('name') || 'مروة').trim();
+var i, n;
+var nm = document.querySelectorAll('.nm');
+for(i=0;i<nm.length;i++){ nm[i].textContent = NAME; }
+
+/* ============ نجوم الخلفية ============ */
+(function(){
+  if(REDUCED) return;
+  var box = document.getElementById('decor');
+  var emo = ['✨','⭐','🌸','💫','🌟','🩷','👑'];
+  var count = LIGHT ? 9 : 16;
+  var frag = document.createDocumentFragment();
+  for(var i=0;i<count;i++){
+    var s = document.createElement('span');
+    s.textContent = emo[i % emo.length];
+    s.style.left = (Math.random()*100) + '%';
+    s.style.fontSize = (13 + Math.random()*20) + 'px';
+    s.style.animationDuration = (12 + Math.random()*12) + 's';
+    s.style.animationDelay = (-Math.random()*20) + 's';
+    frag.appendChild(s);
+  }
+  box.appendChild(frag);
+})();
+
+/* ============ الصوت ============ */
+var AC=null, musicOn=false, musicTimer=null, step=0;
+function ac(){
+  if(!AC){
+    var A = window.AudioContext||window.webkitAudioContext;
+    if(!A) return null;
+    AC = new A();
+  }
+  if(AC.state === 'suspended'){ AC.resume(); }
+  return AC;
+}
+function tone(freq,dur,type,vol,delay){
+  var c = ac(); if(!c) return;
+  try{
+    var t = c.currentTime + (delay||0);
+    var o = c.createOscillator(), g = c.createGain();
+    o.type = type||'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.linearRampToValueAtTime(vol||0.12, t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+(dur||0.3));
+    o.connect(g); g.connect(c.destination);
+    o.start(t); o.stop(t+(dur||0.3)+0.05);
+  }catch(e){}
+}
+function sPop(){ tone(230+Math.random()*250,.14,'triangle',.09); }
+function sYes(){ tone(523.25,.36,'sine',.12,0); tone(659.25,.36,'sine',.12,.07); tone(783.99,.4,'sine',.12,.14); }
+function sWin(){ [523.25,587.33,659.25,783.99,880,1046.5].forEach(function(f,i){ tone(f,.55,'sine',.13,i*.1); }); }
+
+/* ===== موسيقى الخلفية =====
+   الأولوية لملف أغنية حقيقي بنفس المجلد (tamally.mp3 مثلاً).
+   إذا ما لكاه، يرجع تلقائياً للّحن البديل. */
+var bgm  = document.getElementById('bgm');
+var mBtn = document.getElementById('musicBtn');
+var usingFile = false, fadeT = null;
+var VOL = 0.5;
+
+/* تكدر تحدد اسم الأغنية من الرابط: index.html?song=اسم-الملف.mp3 */
+var songParam = new URLSearchParams(location.search).get('song');
+if(songParam){ bgm.innerHTML = ''; bgm.src = songParam; }
+
+var MELODY=[523.25,659.25,783.99,659.25,587.33,698.46,880,698.46,493.88,587.33,783.99,587.33,523.25,659.25,1046.5,783.99];
+function synthOn(){
+  if(musicTimer || !ac()) return;
+  musicTimer = setInterval(function(){
+    var f = MELODY[step % MELODY.length];
+    tone(f,.9,'sine',.042); tone(f/2,1.1,'triangle',.024);
+    step++;
+  },420);
+}
+function synthOff(){ clearInterval(musicTimer); musicTimer = null; }
+
+function fade(to, ms, done){
+  clearInterval(fadeT);
+  var from = bgm.volume, t0 = performance.now();
+  fadeT = setInterval(function(){
+    var k = Math.min(1, (performance.now()-t0)/ms);
+    try{ bgm.volume = from + (to-from)*k; }catch(e){}
+    if(k >= 1){ clearInterval(fadeT); fadeT = null; if(done) done(); }
+  }, 45);
+}
+function musicUI(on){
+  musicOn = on;
+  mBtn.innerHTML = on ? '&#9835;' : '&#9834;';
+  mBtn.style.opacity = on ? 1 : .55;
+}
+function musicStart(){
+  var p = null;
+  try{ bgm.volume = 0; p = bgm.play(); }catch(e){}
+  if(p && p.then){
+    p.then(function(){ usingFile = true;  musicUI(true); fade(VOL, 1800); })
+     .catch(function(){ usingFile = false; synthOn(); musicUI(!!musicTimer); });
+  }else{
+    setTimeout(function(){
+      if(bgm && !bgm.paused){ usingFile = true; musicUI(true); fade(VOL, 1800); }
+      else { usingFile = false; synthOn(); musicUI(!!musicTimer); }
+    }, 400);
+  }
+}
+function musicStop(){
+  if(usingFile){ fade(0, 450, function(){ try{ bgm.pause(); }catch(e){} }); }
+  synthOff();
+  musicUI(false);
+}
+function toggleMusic(){ if(musicOn) musicStop(); else musicStart(); }
+mBtn.addEventListener('click', toggleMusic);
+
+/* ============ التوست ============ */
+var tEl = document.getElementById('toast'), tTimer=null;
+function toast(msg){
+  tEl.textContent = msg; tEl.classList.add('show');
+  clearTimeout(tTimer);
+  tTimer = setTimeout(function(){ tEl.classList.remove('show'); }, 2000);
+}
+
+/* ============ الجزيئات (كانفس) ============ */
+var cv = document.getElementById('fx'), ctx = cv.getContext('2d', {alpha:true});
+var parts = [], running = false, DPR = 1;
+
+/* نرسم كل إيموجي مرة وحدة بكانفس صغير ونعيد استخدامه — أسرع بكثير من fillText */
+var SPRITES = {};
+function sprite(e){
+  var s = SPRITES[e];
+  if(s) return s;
+  var size = 48;
+  s = document.createElement('canvas');
+  s.width = s.height = size;
+  var c = s.getContext('2d');
+  c.font = Math.floor(size*0.8) + 'px serif';
+  c.textAlign='center'; c.textBaseline='middle';
+  c.fillText(e, size/2, size/2 + 1);
+  SPRITES[e] = s;
+  return s;
+}
+
+function sizeCanvas(){
+  VW = innerWidth; VH = innerHeight;
+  DPR = Math.min(devicePixelRatio || 1, LIGHT ? 1.5 : 2);
+  cv.width  = Math.round(VW * DPR);
+  cv.height = Math.round(VH * DPR);
+  cv.style.width  = VW + 'px';
+  cv.style.height = VH + 'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+sizeCanvas();
+
+var EMO = ['✨','⭐','🌸','💫','🌟','🎉','🩷','👑'];
+function push(p){
+  if(parts.length >= MAX_PARTS){ parts.shift(); }
+  parts.push(p);
+}
+function burst(x,y,n,power){
+  if(!MAX_PARTS) return;
+  n = Math.round((n||16) * (LIGHT ? .6 : 1)); power = power||9;
+  for(var i=0;i<n;i++){
+    push({x:x,y:y,
+      vx:(Math.random()-.5)*power,
+      vy:(Math.random()*-1-.4)*power*.7,
+      g:.17+Math.random()*.1, s:14+Math.random()*18,
+      r:Math.random()*6.28, vr:(Math.random()-.5)*.2, life:1,
+      img:sprite(EMO[(Math.random()*EMO.length)|0])});
+  }
+  start();
+}
+function rain(n){
+  if(!MAX_PARTS) return;
+  n = Math.round((n||60) * (LIGHT ? .5 : 1));
+  for(var i=0;i<n;i++){
+    push({x:Math.random()*VW, y:-40-Math.random()*VH*.5,
+      vx:(Math.random()-.5)*2, vy:1.6+Math.random()*3,
+      g:.035, s:16+Math.random()*20,
+      r:Math.random()*6.28, vr:(Math.random()-.5)*.11, life:1,
+      img:sprite(EMO[(Math.random()*EMO.length)|0])});
+  }
+  start();
+}
+function start(){ if(!running){ running = true; requestAnimationFrame(loop); } }
+function loop(){
+  ctx.clearRect(0,0,VW,VH);
+  if(!parts.length || document.hidden){ running=false; return; }   /* توقف تام لما ما أكو شي = ما يستهلك بطارية */
+  for(var i=parts.length-1;i>=0;i--){
+    var p = parts[i];
+    p.vy += p.g; p.x += p.vx; p.y += p.vy; p.r += p.vr;
+    p.life -= .0045;
+    if(p.life <= 0 || p.y > VH+80){ parts.splice(i,1); continue; }
+    ctx.save();
+    ctx.globalAlpha = p.life > 1 ? 1 : p.life;
+    ctx.translate(p.x, p.y);
+    if(p.r) ctx.rotate(p.r);
+    ctx.drawImage(p.img, -p.s/2, -p.s/2, p.s, p.s);
+    ctx.restore();
+  }
+  requestAnimationFrame(loop);
+}
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden){ parts.length = 0; }
+  else { start(); }
+});
+
+/* ============ زر «لا» الهارب (ما يختفي أبداً) ============ */
+var TAUNTS = ['لا 🙂','حاولي بعد 😄','ما راح تكدرين 😜','جربي مرة ثانية 😂',
+  'مستحيل 😎','بعيد بعيد 🏃','الجواب واحد بس ☝️','تعبتيني والله 😩',
+  'ليش تصرّين؟ 🤭','ما توصلين إليّ 😆','هربت بعد 💨','ما ينضغط أبداً 🙃'];
+
+function detach(b){
+  /* نثبّته مرة وحدة، وبعدها كل الحركة بالـ transform فقط */
+  var r = b.getBoundingClientRect();
+  b.__w = r.width; b.__h = r.height;
+  b.__x = r.left;  b.__y = r.top;
+
+  /* مهم: ننقله برّا الكارت.
+     الكارت عنده backdrop-filter + overflow:hidden، يعني يقصّ أي عنصر يطلع من حدوده
+     حتى لو position:fixed — فالزر كان «يختفي» بأول قفزة. بالـ body ما أكو قصّ. */
+  if(b.parentNode !== document.body){
+    if(!b.__home){ b.__home = b.parentNode; }
+    document.body.appendChild(b);
+  }
+
+  b.style.cssText += ';position:fixed;left:0;top:0;margin:0;z-index:88;' +
+                     'width:' + r.width + 'px;height:' + r.height + 'px;will-change:transform;';
+  b.style.transform = 'translate3d(' + r.left + 'px,' + r.top + 'px,0)';
+  if(b.__partner){                                   /* قراءة وحدة بعد ما تغيّر التخطيط */
+    var pr = b.__partner.getBoundingClientRect();
+    b.__px = pr.left + pr.width/2;
+    b.__py = pr.top + pr.height/2;
+  }
+  b.__fixed = true;
+}
+
+/* يرجّع الزر لمكانه الأصلي جوّه الكارت (بين الأسئلة أو عند الخروج من الاختبار) */
+function homeBtn(b){
+  release(b);
+  b.style.cssText = '';
+  b.__fixed = false; b.__count = 0; b.__px = undefined;
+  if(b.__home && b.parentNode !== b.__home){ b.__home.appendChild(b); }
+}
+
+function flee(b){
+  var now = performance.now();
+  if(now - (b.__last||0) < 110) return;              /* حاجز يمنع الحسابات الزايدة */
+  b.__last = now;
+
+  if(!b.__fixed) detach(b);
+
+  var c = (b.__count = (b.__count||0) + 1);
+  burst(b.__x + b.__w/2, b.__y + b.__h/2, 4, 5);
+  sPop();
+
+  /* نختار الأبعد عن مكانه الحالي وعن زر الجواب — بدون أي قراءة من الصفحة */
+  var pad = 12;
+  var maxX = Math.max(pad, VW - b.__w - pad);
+  var maxY = Math.max(pad, VH - b.__h - pad);
+  var curX = b.__x + b.__w/2, curY = b.__y + b.__h/2;
+  var bx = b.__x, by = b.__y, bestScore = -1;
+  var tries = LIGHT ? 14 : 26;
+  for(var i=0;i<tries;i++){
+    var cx = pad + Math.random()*(maxX-pad);
+    var cy = pad + Math.random()*(maxY-pad);
+    var mx = cx + b.__w/2, my = cy + b.__h/2;
+    var dYes = b.__px !== undefined ? Math.hypot(mx-b.__px, my-b.__py) : 400;
+    if(dYes < 140) continue;
+    var sc = Math.hypot(mx-curX, my-curY) + Math.min(dYes,420)*.55;
+    if(sc > bestScore){ bestScore = sc; bx = cx; by = cy; }
+  }
+  b.__x = bx; b.__y = by;
+
+  var scale = (b.__mode === 'shrink') ? Math.max(.62, 1 - c*.07) : 1;
+  var rot   = (Math.random()-.5) * 24;
+  b.style.transform = 'translate3d(' + bx + 'px,' + by + 'px,0) rotate(' + rot + 'deg) scale(' + scale + ')';
+  b.textContent = TAUNTS[(c-1) % TAUNTS.length];
+
+  if(b.__partner){ b.__partner.style.transform = 'scale(' + Math.min(1.45, 1 + c*.07) + ')'; }
+  if(c === 8){ toast('ما راح يخلّيچ تضغطينه... جاوبي الصح 😌'); }
+}
+
+var activeBtn = null;
+function arm(b, mode, partner){
+  release(b);
+  b.__mode = mode || 'jump';
+  b.__count = 0; b.__fixed = false;
+  b.__partner = partner || null;
+  b.__px = undefined;
+  b.__h1 = function(e){ e.preventDefault(); e.stopPropagation(); flee(b); };
+  b.addEventListener('pointerenter', b.__h1);
+  b.addEventListener('pointerdown',  b.__h1);
+  b.addEventListener('click',        b.__h1);
+  b.addEventListener('touchstart',   b.__h1, {passive:false});
+  if(mode === 'run' || mode === 'runfar'){
+    var R = (mode === 'runfar') ? 220 : 145, R2 = R*R;
+    /* بدون أي قراءة من الصفحة داخل الحركة = صفر تأخير */
+    b.__mm = function(e){
+      if(!b.__fixed){ detach(b); }
+      var dx = e.clientX - (b.__x + b.__w/2), dy = e.clientY - (b.__y + b.__h/2);
+      if(dx*dx + dy*dy < R2) flee(b);
+    };
+    window.addEventListener('pointermove', b.__mm, {passive:true});
+  }
+  activeBtn = b;
+}
+function release(b){
+  if(b.__h1){
+    b.removeEventListener('pointerenter', b.__h1);
+    b.removeEventListener('pointerdown',  b.__h1);
+    b.removeEventListener('click',        b.__h1);
+    b.removeEventListener('touchstart',   b.__h1);
+    b.__h1 = null;
+  }
+  if(b.__mm){ window.removeEventListener('pointermove', b.__mm); b.__mm = null; }
+  if(activeBtn === b) activeBtn = null;
+}
+
+/* ============ الأسئلة ============ */
+var Q = [
+  {q:'منو أحلى وحدة بالعالم؟',              y:NAME+' 👑',        n:'وحدة ثانية', m:'jump',   ok:'صح! وما بيها ولا شك 🌟'},
+  {q:'ومنو صاحبة أحلى ضحكة؟',               y:'أكيد '+NAME+' 😄', n:'ما أدري',    m:'run',    ok:'جوابچ صحيح مرة ثانية 😌'},
+  {q:'منو الوحيدة اللي ما تحتاج فلتر بصورها؟', y:NAME+' 📸✨',      n:'تحتاج فلتر', m:'shrink', ok:'ثلاثة من ثلاثة ✨'},
+  {q:'ومنو الوحيدة اللي ما ينملّ منها أحد؟', y:NAME+' 🌟',        n:'أكو غيرها',  m:'runfar', ok:'كملتيهن كلهن صح 🎉'}
+];
+var AR = ['١','٢','٣','٤'], idx = 0;
+
+var scr = {intro:document.getElementById('scIntro'), quiz:document.getElementById('scQuiz'), end:document.getElementById('scEnd')};
+function show(k){
+  for(var s in scr){ scr[s].classList.toggle('active', s === k); }
+  scrollTo(0,0);
+}
+
+var yesBtn = document.getElementById('yesBtn');
+var noBtn  = document.getElementById('noBtn');
+var dots   = document.getElementById('dots').children;
+var qNum   = document.getElementById('qNum');
+var qText  = document.getElementById('qText');
+
+function renderQ(){
+  var q = Q[idx];
+  qNum.textContent  = 'السؤال ' + AR[idx] + ' من ٤';
+  qText.textContent = q.q;
+
+  homeBtn(noBtn);
+  noBtn.className = 'btn ghost runaway';
+  noBtn.textContent = q.n;
+  yesBtn.textContent = q.y;
+  yesBtn.style.transform = '';
+
+  for(var i=0;i<dots.length;i++){ dots[i].classList.toggle('on', i <= idx); }
+  requestAnimationFrame(function(){ arm(noBtn, q.m, yesBtn); });
+}
+
+yesBtn.addEventListener('click', function(){
+  sYes();
+  var r = yesBtn.getBoundingClientRect();
+  burst(r.left + r.width/2, r.top + r.height/2, 20, 10);
+  toast(Q[idx].ok);
+  idx++;
+  if(idx < Q.length){ setTimeout(renderQ, 300); }
+  else { homeBtn(noBtn); setTimeout(showResult, 450); }
+});
+
+/* ============ ٢٥ صفة ============ */
+var TRAITS = [
+  ['👑','أحلى وحدة — وهذا واقع مو رأي'],
+  ['😄','ضحكتچ تصلّح يوم كامل خربان'],
+  ['🌸','طيبة قلبچ ما إلها مثيل'],
+  ['✨','أي مكان تكونين بيه يصير أحلى'],
+  ['🧠','ذكية وتفهمين من نص كلمة'],
+  ['🌷','ذوقچ عالي بكل شي تختارينه'],
+  ['☀️','طاقتچ إيجابية وتعدي للناس'],
+  ['🤍','صادقة وما تعرفين اللف والدوران'],
+  ['🎧','تسمعين للناس بقلبچ مو بأذنچ'],
+  ['💪','قوية وتتحمّلين أكثر مما تتصورين'],
+  ['🕊️','روحچ خفيفة ومريحة'],
+  ['📚','تحبين تتعلمين وتفهمين بسرعة'],
+  ['🍀','حظ أي واحد إنه يعرفچ'],
+  ['🎨','عندچ حس فني حلو'],
+  ['🫶','تساعدين بدون ما تنتظرين مقابل'],
+  ['😌','هادئة وما تحبين المشاكل'],
+  ['🌙','تعرفين شنو تكولين وبأي وقت'],
+  ['🔥','عندچ همّة وما تستسلمين'],
+  ['🎁','وجودچ هدية بحد ذاته'],
+  ['🧿','عين الله عليچ من كل شر'],
+  ['😂','نكتتچ حاضرة بأي وقت'],
+  ['🌊','صبرچ واسع مثل البحر'],
+  ['👗','أناقتچ بسيطة وما تحتاج تكلّف'],
+  ['🗝️','تحفظين السر وينلگى عليچ الاعتماد'],
+  ['⭐','ما تتكررين... نسخة وحدة بس']
+];
+
+var traitsBox = document.getElementById('traits'), traitEls = null;
+function buildTraits(){
+  if(traitEls) return traitEls;
+  traitEls = [];
+  var frag = document.createDocumentFragment();
+  for(var i=0;i<TRAITS.length;i++){
+    var d = document.createElement('div');
+    d.className = 'trait';
+    var b = document.createElement('b');    b.textContent = TRAITS[i][0];
+    var s = document.createElement('span'); s.textContent = TRAITS[i][1];
+    d.appendChild(b); d.appendChild(s);
+    frag.appendChild(d);
+    traitEls.push(d);
+  }
+  traitsBox.appendChild(frag);
+  return traitEls;
+}
+
+function showResult(){
+  sWin(); show('end'); rain(90);
+  var els = buildTraits(), i;
+  for(i=0;i<els.length;i++){ els[i].classList.remove('show'); }
+  els.forEach(function(el,i){
+    setTimeout(function(){
+      el.classList.add('show');
+      if(i % 4 === 0){ tone(523 + (i%6)*80, .26, 'sine', .05); }
+    }, 300 + i*55);                              /* كلهن يظهرن خلال ثانية ونص تقريباً */
+  });
+  setTimeout(function(){ rain(55); }, 1900);
+}
+
+document.getElementById('startBtn').addEventListener('click', function(){
+  if(!musicOn) toggleMusic();
+  idx = 0; show('quiz'); renderQ(); rain(20);
+});
+document.getElementById('againBtn').addEventListener('click', function(){
+  idx = 0; parts.length = 0; homeBtn(noBtn); show('intro');
+});
+
+/* ============ تغيير حجم الشاشة (مؤجَّل حتى ما يثقّل) ============ */
+var rzT = null;
+addEventListener('resize', function(){
+  clearTimeout(rzT);
+  rzT = setTimeout(function(){
+    sizeCanvas();
+    var b = activeBtn;
+    if(b && b.__fixed){
+      b.__x = Math.min(Math.max(12, b.__x), Math.max(12, VW - b.__w - 12));
+      b.__y = Math.min(Math.max(12, b.__y), Math.max(12, VH - b.__h - 12));
+      b.style.transform = 'translate3d(' + b.__x + 'px,' + b.__y + 'px,0)';
+      if(b.__partner){
+        var pr = b.__partner.getBoundingClientRect();
+        b.__px = pr.left + pr.width/2; b.__py = pr.top + pr.height/2;
+      }
+    }
+  }, 140);
+}, {passive:true});
+
+/* لمسة صغيرة: نجوم عند الضغط */
+addEventListener('pointerdown', function(e){
+  if(Math.random() < .5) burst(e.clientX, e.clientY, 3, 4);
+}, {passive:true});
+
+})();
+</script>
+</body>
+</html>
